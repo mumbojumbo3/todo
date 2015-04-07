@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" applicationComplete="setUp()"
+	xmlns="*" >
+<mx:Style source="assets/main.css" />
+
+	 <mx:RemoteObject
+        id="myRemoteObject"
+        destination="ColdFusion"
+        showBusyCursor="true" source="mytodolist.taskGateway" 
+        fault="Alert.show(event.fault.faultString, 'Error');">
+        <mx:method name="getAll" result="tasksReceived(event)" />
+        <mx:method name="save" result="taskSaved(event)" />
+      </mx:RemoteObject>
+
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.collections.*;
+			import mx.rpc.events.*;
+			import mx.events.*;
+			import mx.utils.*;
+			
+			//important!
+			[Bindable]
+			private var tasks:ArrayCollection = null;
+			
+			
+			private function setUp():void {
+				myRemoteObject.getAll.send();
+				addEventListener("setAsDone",taskDone);
+				addEventListener("addItem",saveTask);
+				addEventListener("saveItem",saveTask);
+			}
+			
+			private function saveTask(event:ItemClickEvent):void{
+				var taskItem:Task =  event.item as Task;
+				myRemoteObject.save.send(taskItem);
+			}
+					
+			private function taskDone(event:ItemClickEvent):void{
+				var taskItem:Task = event.item as Task;
+				taskItem.done = true;
+				myRemoteObject.save.send(taskItem);
+			}			
+			
+				
+			private function tasksReceived(event:ResultEvent):void {
+				var sort:Sort = new Sort();
+				tasks = new ArrayCollection();
+				tasks.source = event.result as Array;				
+				sort.compareFunction = comparePriorities;
+   				tasks.sort = sort;
+			}
+			
+				
+			private function taskSaved(event:ResultEvent):void {
+				var taskItem:Task = event.result as Task;
+				var found:Boolean = false;
+				var i:Number = -1;
+				//find task in list
+					for each (var thisTask:Task in tasks){
+						i++;
+						if (thisTask.id == taskItem.id){
+							if (taskItem.done){//we must remove it
+								//remove this item
+								tasks.removeItemAt(i);
+							}
+							else {//we must update it
+								tasks.setItemAt(taskItem,i);
+							}
+							found = true;				
+							break;
+						}
+					}
+				
+				//if we didn't find it, we must add it
+				if (!found){
+					tasks.addItem(taskItem);
+				}
+				//because there was a change, reorder
+				tasks.refresh();
+			}
+			
+			private function comparePriorities(a:Task, b:Task, fields:Array=null):int {
+				if (a.priority > b.priority){
+				}
+				if (a == null && b == null)
+                	return 0;
+                
+                if (a == null)
+	              return 1;
+    	        if (b == null)
+        	      return -1;
+            
+                if (a.priority < b.priority)
+            	    return -1;
+                if (a.priority > b.priority)
+	                return 1;
+    
+                return 0;
+			}
+
+	
+		]]>
+	</mx:Script>
+	
+	<mx:VBox width="350" x="10" top="10">
+		<mx:Repeater dataProvider="{tasks}" id="taskList">			
+			<TaskItem taskData="{taskList.currentItem}" />		
+		</mx:Repeater>
+	</mx:VBox>
+	<mx:Panel x="378" y="10" width="295" height="187" layout="absolute" title="New Item">
+		<EditForm x="10" y="10" />
+	</mx:Panel>
+	
+</mx:Application>

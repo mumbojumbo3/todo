@@ -1,0 +1,71 @@
+Application { 
+   backgroundColor: #ff9900;
+   backgroundGradientColors: #ff6600, #ffcc99;
+   fillAlphas: 0.66, 1;
+   themeColor: #ff9900;
+   color: #0b333c;
+}
+
+Panel { 
+   borderColor: #cc0033;
+} 
+
+List { 
+   rollOverColor: #ffcc99;
+   selectionColor: #ff9900;
+}
+
+VScrollBar { 
+   themeColor: #ff9900;
+   trackColors: #94999b, #e7e7e7;
+}
+HScrollBar { 
+   themeColor: #ff9900;
+   trackColors: #94999b, #e7e7e7;
+}
+
+.listItem {
+    borderStyle: solid;
+    backgroundColor: #ffffff;
+    backgroundAlpha: .2;
+    borderThickness: 0;
+    dropShadowEnabled: true;
+    cornerRadius: 10;
+	paddingLeft: 5;
+}
+
+.checkButton {
+	cornerRadius: 8;
+	right: 0;
+}
+
+.description{
+	fontSize:15;
+	fontWeight: bold;
+	fontFamily: Arial;
+	paddingLeft: 28;
+	top: 6;
+}
+
+.priorityImage {
+	top: 10;
+	left: 10;
+}
+
+Button { 
+   cornerRadius: 9;
+   textIndent: 0;
+   paddingLeft: 0;
+   paddingRight: 0;
+   fillColors: #ffffff, #ff9900, #ffffff, #ff9900;
+   themeColor: #ff3300;
+}
+
+HRule {
+   strokeColor: #ffe13c;
+   shadowColor: #ff3300;
+}
+
+Alert{
+	backgroundColor: #ff9900;
+}

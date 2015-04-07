@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" styleName="listItem" width="100%" 
+	mouseOver="checkButton.visible=true"
+	mouseOut="checkButton.visible=false" 
+	hideEffect="{fadeOut}" 
+	xmlns="*"
+	height="33"
+	resizeEffect="{resizeEffect}"
+	 >
+
+	<!--  moveEffect="{movea}" removedEffect="{fadeOut}" -->
+  <mx:Fade id="fadeOut" duration="300" alphaFrom="1.0" alphaTo="0.0"  effectEnd="setAsDone()"/>
+	<!--<mx:Move id="movea" duration="1000"/>  -->
+<mx:Resize id="resizeEffect" duration="200" />
+
+	<mx:Script>
+		<![CDATA[
+			import mx.events.*;
+			
+			[Bindable]
+			public var taskData:Task = null;
+				
+			private function setAsDone():void{
+				var setAsDoneEvent:ItemClickEvent = new ItemClickEvent("setAsDone", true);
+				setAsDoneEvent.item = taskData;
+				dispatchEvent(setAsDoneEvent);
+			}
+			
+			private function hideItem():void{
+				//make it invisible
+				this.visible = false;
+			}
+			private function changeState(event:Event):void
+			{
+				currentState = (currentState == "expanded")? "": "expanded";
+			}			
+		]]>
+	</mx:Script>
+	<mx:Image styleName="priorityImage" source="assets/images/priority{taskData.priority}.png" />
+	<mx:Button id="checkButton" icon="@Embed('assets/images/check.png')" click="hideItem()" visible="false" styleName="checkButton" />
+	<mx:Label id="titleField" click="changeState(event)" text="{taskData.description}" styleName="description"
+		 width="290"   />
+	
+	<mx:states>
+		<mx:State name="expanded">
+	      <mx:AddChild position="lastChild">
+	        <EditForm x="10" y="31" taskData="{taskData}" currentState="edit" />
+	      </mx:AddChild>
+	      <mx:SetProperty name="height" value="165"/>
+	    </mx:State>
+	</mx:states>
+	
+</mx:Canvas>

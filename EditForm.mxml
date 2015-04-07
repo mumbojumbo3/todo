@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ItemClickEvent;
+			[Bindable]
+			public var taskData:Task = null;
+			
+			public function saveItem():void
+			{
+				var saveItemEvent:ItemClickEvent = new ItemClickEvent("saveItem", true);
+				taskData.description = descriptionArea.text;
+				taskData.priority = priorityList.selectedItem.data;
+				saveItemEvent.item = taskData;
+				
+				//announce this event
+				dispatchEvent(saveItemEvent);
+			}
+			public function addItem():void
+			{
+				var addItemEvent:ItemClickEvent = new ItemClickEvent("addItem", true);
+				//create a new Task object
+				var taskItem:Task = new Task();
+				//set its properties using the data entered in the form
+				taskItem.done = false;
+				taskItem.description = descriptionArea.text;
+				taskItem.priority = priorityList.selectedItem.data;
+				addItemEvent.item = taskItem;
+				
+				//announce this event
+				dispatchEvent(addItemEvent);
+				cleanForm();
+			}
+			private function cleanForm():void{
+				descriptionArea.text = '';
+			}
+		]]>
+	</mx:Script>
+	
+	
+	<mx:Label x="10" y="7" text="Description"/>
+	<mx:TextArea id="descriptionArea" y="11" height="80" right="10" left="80" text="{taskData.description}"/>
+	<mx:Label x="33" y="100" text="Priority"/>
+	<mx:ComboBox id="priorityList" x="80" y="98" selectedIndex="{taskData.priority-1}">
+		<mx:dataProvider>
+	 	    <mx:ArrayCollection>
+	 	       <mx:source>
+	 	           <mx:Object label="High" data="1"/>
+	 	           <mx:Object label="Medium" data="2"/>
+	 	           <mx:Object label="Low" data="3"/>
+	 	        </mx:source>
+	 	    </mx:ArrayCollection>
+	 	 </mx:dataProvider>
+	</mx:ComboBox>
+	<mx:Button y="98" label="Add" width="50" right="10" id="addButton" click="addItem()"/>
+	
+	<mx:states>
+		<mx:State name="edit">
+			<mx:SetProperty target="{addButton}" name="label" value="Save"/>
+			<mx:SetEventHandler target="{addButton}" name="click" handler="saveItem()"/>
+		</mx:State>
+	</mx:states>
+	
+</mx:Canvas>
